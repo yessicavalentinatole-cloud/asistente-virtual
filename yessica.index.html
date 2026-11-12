@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="contenedor">
+        <h1>🤖 Virtual AI</h1>
+        <p>Tu asistente virtual inteligente</p>
+
+        <div id="conversacion">
+            <div class="bot">
+                ¡Hola! ¿Qué información deseas consultar?
+            </div>
+        </div>
+
+        <div class="entrada">
+            <input id="mensaje" type="text"
+                   placeholder="Escribe tu pregunta...">
+
+            <button onclick="enviar()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        async function enviar() {
+            const campo = document.getElementById("mensaje");
+            const conversacion = document.getElementById("conversacion");
+
+            const mensaje = campo.value.trim();
+
+            if (!mensaje) return;
+
+            conversacion.innerHTML +=
+                `<div class="usuario">${mensaje}</div>`;
+
+            campo.value = "";
+
+            const respuesta = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({mensaje: mensaje})
+            });
+
+            const datos = await respuesta.json();
+
+            const burbuja = document.createElement("div");
+            burbuja.className = "bot";
+            burbuja.textContent = datos.respuesta;
+            conversacion.appendChild(burbuja);
+
+            conversacion.scrollTop = conversacion.scrollHeight;
+        }
+
+        document.getElementById("mensaje")
+            .addEventListener("keydown", function(event) {
+                if (event.key === "Enter") enviar();
+            });
+    </script>
+
+</body>
+</html>
