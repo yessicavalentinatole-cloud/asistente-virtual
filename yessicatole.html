@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIRTUAL AI</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef2ff;
+    color: #20294a;
+}
+
+header {
+    background: #172554;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+header p {
+    color: #c7d2fe;
+}
+
+.contenedor {
+    display: flex;
+    min-height: 85vh;
+}
+
+.menu {
+    width: 230px;
+    background: #1e3a8a;
+    padding: 25px 15px;
+}
+
+.menu button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #dbeafe;
+    color: #172554;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.menu button:hover {
+    background: #93c5fd;
+}
+
+.contenido {
+    flex: 1;
+    padding: 30px;
+}
+
+.tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.tarjeta {
+    background: white;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px #0001;
+    text-align: center;
+}
+
+.tarjeta h3 {
+    color: #2563eb;
+}
+
+.seccion {
+    display: none;
+}
+
+.seccion.activa {
+    display: block;
+}
+
+.chat {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 700px;
+}
+
+#mensajes {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.mensaje {
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 10px;
+}
+
+.usuario {
+    background: #dbeafe;
+    text-align: right;
+}
+
+.bot {
+    background: #dcfce7;
+}
+
+input {
+    padding: 13px;
+    width: 75%;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+.enviar {
+    padding: 13px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 14px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #dbeafe;
+}
+
+@media(max-width:650px) {
+    .contenedor {
+        flex-direction: column;
+    }
+    .menu {
+        width: 100%;
+    }
+    input {
+        width: 65%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🤖 VIRTUAL AI</h1>
+    <p>Asistente inteligente para administrar tu negocio</p>
+</header>
+
+<div class="contenedor">
+
+<nav class="menu">
+    <button onclick="mostrar('inicio')">🏠 Inicio</button>
+    <button onclick="mostrar('chat')">💬 Asistente virtual</button>
+    <button onclick="mostrar('productos')">📦 Productos</button>
+    <button onclick="mostrar('inventario')">📊 Inventario</button>
+</nav>
+
+<main class="contenido">
+
+<section id="inicio" class="seccion activa">
+    <h2>Bienvenido a VIRTUAL AI</h2>
+    <p>Administra tu inventario y consulta información de tu negocio.</p>
+
+    <div class="tarjetas">
+        <div class="tarjeta">
+            <h3>📦 Productos</h3>
+            <h2 id="total">6</h2>
+            <p>Productos registrados</p>
+        </div>
+
+        <div class="tarjeta">
+            <h3>💰 Valor inventario</h3>
+            <h2 id="valor">$0</h2>
+            <p>Valor total de existencias</p>
+        </div>
+
+        <div class="tarjeta">
+            <h3>⚠️ Alertas</h3>
+            <h2 id="alertas">0</h2>
+            <p>Productos con poco stock</p>
+        </div>
+    </div>
+</section>
+
+<section id="chat" class="seccion">
+    <h2>💬 Asistente VIRTUAL AI</h2>
+    <p>¡Hola! Soy tu asistente. Pregúntame por los productos.</p>
+
+    <div class="chat">
+        <div id="mensajes">
+            <div class="mensaje bot">
+                Hola, soy VIRTUAL AI. ¿En qué puedo ayudarte?
+            </div>
+        </div>
+
+        <input id="pregunta" type="text"
+        placeholder="Escribe tu pregunta..."
+        onkeydown="if(event.key==='Enter') enviar()">
+
+        <button class="enviar" onclick="enviar()">Enviar</button>
+
+        <p>Prueba: ¿Qué productos hay? ¿Cuánto cuesta el mouse?</p>
+    </div>
+</section>
+
+<section id="productos" class="seccion">
+    <h2>📦 Lista de productos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody id="tabla"></tbody>
+    </table>
+</section>
+
+<section id="inventario" class="seccion">
+    <h2>📊 Control de inventario</h2>
+    <p>Consulta los productos que necesitan reposición.</p>
+    <div id="listaAlertas"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+
+let productos = [
+    {nombre:"Computador", precio:2500000, stock:5},
+    {nombre:"Teclado", precio:80000, stock:15},
+    {nombre:"Mouse", precio:45000, stock:20},
+    {nombre:"Audifonos", precio:120000, stock:8},
+    {nombre:"Monitor", precio:750000, stock:3},
+    {nombre:"Impresora", precio:500000, stock:10}
+];
+
+function mostrar(id) {
+    document.querySelectorAll(".seccion").forEach(s => {
+        s.classList.remove("activa");
+    });
+
+    document.getElementById(id).classList.add("activa");
+}
+
+function cargarDatos() {
+    document.getElementById("total").textContent = productos.length;
+
+    let valor = productos.reduce((s,p) => s + p.precio*p.stock, 0);
+    document.getElementById("valor").textContent =
+        "$" + valor.toLocaleString("es-CO");
+
+    let alertas = productos.filter(p => p.stock <= 5);
+    document.getElementById("alertas").textContent = alertas.length;
+
+    document.getElementById("tabla").innerHTML =
+        productos.map(p => `
+        <tr>
+            <td>${p.nombre}</td>
+            <td>$${p.precio.toLocaleString("es-CO")}</td>
+            <td>${p.stock}</td>
+        </tr>`).join("");
+
+    document.getElementById("listaAlertas").innerHTML =
+        alertas.map(p => `<p>⚠️ ${p.nombre}: quedan ${p.stock} unidades</p>`).join("");
+}
+
+function responder(texto) {
+    let t = texto.toLowerCase();
+
+    if(t.includes("hola")) {
+        return "¡Hola! Soy VIRTUAL AI. Estoy listo para ayudarte.";
+    }
+
+    if(t.includes("productos") || t.includes("inventario")) {
+        return "Tenemos: " + productos.map(p => p.nombre).join(", ");
+    }
+
+    if(t.includes("precio") || t.includes("cuesta")) {
+        let p = productos.find(p => t.includes(p.nombre.toLowerCase()));
+        if(p) return p.nombre + " cuesta $" + p.precio.toLocaleString("es-CO");
+        return "Dime el nombre del producto para consultar su precio.";
+    }
+
+    if(t.includes("stock") || t.includes("existencias")) {
+        let p = productos.find(p => t.includes(p.nombre.toLowerCase()));
+        if(p) return "Tenemos " + p.stock + " unidades de " + p.nombre;
+        return productos.map(p => p.nombre + ": " + p.stock + " unidades").join(" | ");
+    }
+
+    if(t.includes("poco stock")) {
+        return productos.filter(p => p.stock <= 5)
+            .map(p => p.nombre + ": " + p.stock + " unidades").join(", ");
+    }
+
+    return "No entendí tu pregunta. Prueba consultar productos, precios o stock.";
+}
+
+function enviar() {
+    let campo = document.getElementById("pregunta");
+    let texto = campo.value.trim();
+
+    if(texto === "") return;
+
+    let mensajes = document.getElementById("mensajes");
+
+    mensajes.innerHTML +=
+        `<div class="mensaje usuario">${texto}</div>`;
+
+    let respuesta = responder(texto);
+
+    mensajes.innerHTML +=
+        `<div class="mensaje bot">${respuesta}</div>`;
+
+    campo.value = "";
+    mensajes.scrollTop = mensajes.scrollHeight;
+}
+
+cargarDatos();
+
+</script>
+
+</body>
+</html>
